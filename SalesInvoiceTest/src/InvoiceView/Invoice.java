@@ -109,7 +109,7 @@ public class Invoice extends javax.swing.JFrame{
 		frame.getContentPane().add(table);
 		
 	
-		JLabel lblNewLabel = new JLabel("Invoice Number");
+		JLabel lblNewLabel = new JLabel("Invoice Numbers");
 		lblNewLabel.setBounds(350, 50, 77, 14);
 		frame.getContentPane().add(lblNewLabel);
 		
