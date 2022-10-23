@@ -62,7 +62,7 @@ public class Invoice extends javax.swing.JFrame{
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialize  the contents of the frame.
 	 */
 	private void initialize() {
 	
