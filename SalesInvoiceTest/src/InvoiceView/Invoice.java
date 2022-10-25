@@ -11,31 +11,39 @@ import javax.swing.JTable;
 import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
 
-
-
-
 import javax.swing.border.LineBorder;
 import javax.swing.JLabel;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
+
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputMethodListener;
-import java.awt.event.InputMethodEvent;
+import java.util.ArrayList;
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.AncestorEvent;
+
 
 public class Invoice extends javax.swing.JFrame{
 
 	
 	private JFrame frame;
-	private JTable table;
+	//private JTable table;
+	private JTable InvTable;
+	
 	private JTable table_1;
-	    private InvoiceController listener = new InvoiceController();
+	    private InvoiceController listener = new InvoiceController(this);
+	    private ArrayList<InvoiceModelHeader> invoices;
 	    
 	    public static DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+	    private TableHeader TableHeader;
+	   // private static File Hpath= "C:\\Users\\AzizM7\\git\\Invoice\\SalesInvoiceTest\\InvoiceHeader.csv";
 	    
 
 	/**
@@ -44,9 +52,19 @@ public class Invoice extends javax.swing.JFrame{
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				//Invoice I = new Invoice();
+			  
+//					try {
+//						I.listener.load("InvoiceHeader.csv","InvoiceLine.csv");
+//					} catch (IOException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
 				try {
 					Invoice window = new Invoice();
+					window.listener.load("InvoiceHeader.csv","InvoiceLine.csv");
 					window.frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -91,22 +109,27 @@ public class Invoice extends javax.swing.JFrame{
 //				{null, null, null, null},
 //				{null, null, null, null},
 //			}; 
-		table = new JTable();
-	
-		table.setSurrendersFocusOnKeystroke(true);
-		table.setBounds(10, 24, 300, 48);
-		table.setModel(new DefaultTableModel(
+		InvTable = new JTable();
+		
+		InvTable.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, null, null, null},
-				{null, null, null, null},
-				{null, null, null, null},
 			},
 			new String[] {
-				null, null, null, null
 			}
 		));
+		InvTable.setColumnSelectionAllowed(true);
+		InvTable.setSurrendersFocusOnKeystroke(true);
+		InvTable.setBounds(10, 24, 300, 178);
+//		InvTable.setModel(new DefaultTableModel(
+//			new Object[][] {
+//				
+//			},
+//			new String[] {
+//				
+//			}
+//		));
 		
-		frame.getContentPane().add(table);
+		frame.getContentPane().add(InvTable);
 		
 	
 		JLabel lblNewLabel = new JLabel("Invoice Numbers");
@@ -147,19 +170,14 @@ public class Invoice extends javax.swing.JFrame{
 		
 		table_1 = new JTable();
 		table_1.setSurrendersFocusOnKeystroke(true);
-		table_1.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		//table_1.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		table_1.setModel(new DefaultTableModel(
-			new Object[][] {
-				{"NO.", "Item Name", "Item Price", "Count", "Item Total"},
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-			},
-			new String[] {
-				"New column", "New column", "New column", "New column", "New column"
-			}
+			new Object[][] {} ,
+			new String[] {}
 		));
-		table_1.setBorder(new LineBorder(new Color(0, 0, 0)));
-		table_1.setBounds(362, 144, 307, 48);
+		//table_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+		table_1.setBounds(362, 144, 307, 89);
+		table_1.setColumnSelectionAllowed(true);
 		frame.getContentPane().add(table_1);
 		
 		JButton btnNewButton = new JButton("Create New Invoice");
@@ -168,7 +186,10 @@ public class Invoice extends javax.swing.JFrame{
 		
 		JButton btnDeleteinvoice = new JButton("Delete Invoice");
 		btnDeleteinvoice.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		btnDeleteinvoice.setBounds(192, 245, 142, 23);
@@ -182,4 +203,32 @@ public class Invoice extends javax.swing.JFrame{
 		btnDeleteLine.setBounds(557, 245, 112, 23);
 		frame.getContentPane().add(btnDeleteLine);
 	}
+	public ArrayList<InvoiceModelHeader> getInvoices(){
+		if(invoices==null) 
+			invoices = new ArrayList<>();
+			return invoices;
+		
+	}
+	 public InvoiceModelHeader getInvoiceByNum(int num) {
+		 InvoiceModelHeader inv = null;
+	        for (InvoiceModelHeader item : getInvoices()) {
+	            if (item.getNum() == num) {
+	                inv = item;
+	                break;
+	            }
+	        }
+	        return inv;
+	    }
+
+	
+	public void setTableHeader(TableHeader TableHeader) {
+		this.TableHeader= TableHeader;
+		this.InvTable.setModel(TableHeader); 
+	}
+	public TableHeader getTableHeader() {
+		if(TableHeader == null)
+			TableHeader= new TableHeader(invoices);
+		return TableHeader;
+	}
+	
 }

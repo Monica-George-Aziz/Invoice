@@ -3,7 +3,7 @@ package InvoiceView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,8 +19,13 @@ import javax.swing.JOptionPane;
 
 
 
-public class InvoiceController implements ActionListener {
 
+
+public class InvoiceController implements ActionListener {
+private Invoice Iframe;
+public InvoiceController(Invoice Iframe) {
+	this.Iframe = Iframe;
+}
 	 @Override
 	    public void actionPerformed(ActionEvent e) {
 	        String ActionC = e.getActionCommand();
@@ -70,23 +75,28 @@ public class InvoiceController implements ActionListener {
     private void deleteLine() {
     }
 
-    private void load(String hPath, String lPath) throws IOException {
+    void load(String hPath, String lPath) throws IOException {
         File hFile = null;
         File lFile = null;
         if (hPath == null && lPath == null) {
             JFileChooser fc = new JFileChooser();
-            JOptionPane.showMessageDialog(null, "Choose Header File!", "Header", JOptionPane.WARNING_MESSAGE);
-            int result = fc.showOpenDialog(null);
+            JOptionPane.showMessageDialog(Iframe, "Choose Header File!", "Header", JOptionPane.WARNING_MESSAGE);
+            int result = fc.showOpenDialog(Iframe);
             if (result == JFileChooser.APPROVE_OPTION) {
                 hFile = fc.getSelectedFile();
                 readFile(hFile);
-                JOptionPane.showMessageDialog(null, "Choose Line File!", "Line", JOptionPane.WARNING_MESSAGE);
-                result = fc.showOpenDialog(null);
+                JOptionPane.showMessageDialog(Iframe, "Choose Line File!", "Line", JOptionPane.WARNING_MESSAGE);
+                result = fc.showOpenDialog(Iframe);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     lFile = fc.getSelectedFile();
                     readFile(lFile);
                 }
             }
+           
+        }
+        else {
+        	hFile=new File(hPath);
+        	lFile= new File(lPath);
         }
 
         if (hFile != null && lFile != null) {
@@ -103,11 +113,25 @@ public class InvoiceController implements ActionListener {
                     int num = Integer.parseInt(parts[0]);
                     try{d = Invoice.df.parse(parts[1]);}catch (ParseException pex) {}
                     String name = parts[2];
-                    InvoiceModel inv = new InvoiceModel(num, name, d);
+                    InvoiceModelHeader inv = new InvoiceModelHeader(num, name, d);
+                    Iframe.getInvoices().add(inv);
+                    }
+                Iframe.setTableHeader(new TableHeader(Iframe.getInvoices()));
+                for (String lLine : lLines) {
                     
+                    String[] parts = lLine.split(",");
+                    /*
+                        parts = ["1", "Mobile", "3200", "1"]
+                    */
+                    int invNum = Integer.parseInt(parts[0]);
+                    String name = parts[1];
+                    int price = Integer.parseInt(parts[2]);
+                    int count = Integer.parseInt(parts[3]);
+                    InvoiceModelHeader invoice = Iframe.getInvoiceByNum(invNum);
+                    InvoiceModelItems item = new InvoiceModelItems(name, price, count, invoice);
                 }
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(null, "Error while loading files", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(Iframe, "Error while loading files", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
