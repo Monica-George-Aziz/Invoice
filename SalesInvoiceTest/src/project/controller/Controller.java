@@ -45,19 +45,19 @@ public class Controller implements ActionListener, ListSelectionListener {
         String Action = e.getActionCommand();
 
         switch (Action) {
-            case "New Invoice":
+            case "Create New Invoice":
                 newInvoice();
                 break;
 
-            case "Delete Invoice":
+            case "Delete selected Invoice":
                 deleteInvoice();
                 break;
 
-            case "New Line":
+            case "New Invoice Line":
                 newLine();
                 break;
 
-            case "Delete Line":
+            case "Delete Invoice Line":
                 deleteLine();
                 break;
 
